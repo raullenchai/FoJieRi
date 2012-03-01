@@ -6,18 +6,16 @@ import datetime
 import urllib2, urllib
 import wsgiref.handlers
 import re, os
-import simplejson
 import difflib
-import sys 
 
-
+from datetime import datetime, timedelta
+from time import gmtime
 from urllib2 import *
 from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import mail  
-from time import gmtime, strftime
 
 g_lunar_month_days = [
     0xF0EA4, 0xF1D4A, 0x52C94, 0xF0C96, 0xF1536, 0x42AAC, 0xF0AD4, 0xF16B2, 0x22EA4, 0xF0EA4,  # 1901-1910
@@ -42,6 +40,9 @@ g_lunar_month_days = [
     0xF0956, 0xF0AB6, 0x615AC, 0xF16D4, 0xF0EA4, 0x42E4A, 0xF164A, 0xF1516, 0x22936,           # 2090-2099
 ]
 
+START_YEAR, END_YEAR = 1901, 1900 + len(g_lunar_month_days)
+LUNAR_START_DATE, SOLAR_START_DATE = (1901, 1, 1), datetime(1901,2,19)
+LUNAR_END_DATE, SOLAR_END_DATE = (2099, 12, 30), datetime(2100,2,18)
 
 Fo_holidays = [
                (1,1, "弥勒佛圣诞日"),
@@ -74,13 +75,6 @@ NumGB = ["","一", "二", "三", "四", "五", "六", "七", "八", "九", "十"
          "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "卅",
          "卅一"]
 
-
-import sys
-from datetime import datetime, timedelta
-
-START_YEAR, END_YEAR = 1901, 1900 + len(g_lunar_month_days)
-LUNAR_START_DATE, SOLAR_START_DATE = (1901, 1, 1), datetime(1901,2,19) # 1901閿熸枻鎷烽敓鏂ゆ嫹閿熼摪绛规嫹涓�敓渚ョ櫢鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹涓�901/2/19
-LUNAR_END_DATE, SOLAR_END_DATE = (2099, 12, 30), datetime(2100,2,18) # 2099閿熸枻鎷�2閿熸枻鎷�0閿熶茎鐧告嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹2100/2/8
 
 def date_diff(tm):
     return (tm - SOLAR_START_DATE).days
@@ -129,7 +123,6 @@ def get_lunar_date(tm):
 
 
 def guestbook_key(guestbook_name=None):
-    """Constructs a datastore key"""
     return db.Key.from_path('Guestbook', guestbook_name or 'default_guestbook')
 
 
@@ -151,7 +144,6 @@ def verify_reCAPTCHA (recaptcha_challenge_field,
             len (recaptcha_response_field) and len (recaptcha_challenge_field)):
         return RecaptchaResponse (is_valid = False, error_code = 'incorrect-captcha-sol')
     
-
     def encode_if_necessary(s):
         if isinstance(s, unicode):
             return s.encode('utf-8')
@@ -172,7 +164,7 @@ def verify_reCAPTCHA (recaptcha_challenge_field,
             "User-agent": "reCAPTCHA Python"
             }
         )
-    
+
     httpresp = urllib2.urlopen (request)
 
     return_values = httpresp.read ().splitlines ();
@@ -308,4 +300,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-            
