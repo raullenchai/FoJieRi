@@ -1,0 +1,5 @@
+indexes:
+- kind: Greeting
+  properties:
+  - name: email
+  - name: add_date
