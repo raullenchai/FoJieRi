@@ -283,8 +283,7 @@ class SendEmail(webapp.RequestHandler):
                         self.response.out.write('<blockquote>sending...</blockquote>')
                         sender_address = 'noreply@literhub.com'
                         subject = r"今天是佛节日!"
-                        body = """
-						今日 (" + NumGB[mymonth] + r"月" + NumGB[myday] + r"日) " + r"是 " + x[2] + r"，祈愿佛日增辉，正法久驻，国泰民安，众生解脱!
+                        body = "今日 (" + NumGB[mymonth] + "月" + NumGB[myday] + "日) " + "是 " + x[2] + """，祈愿佛日增辉，正法久驻，国泰民安，众生解脱!
 						
 						请转告亲友和同修!
 						谢谢您对佛节日(fojieri.appspot.com)的关注!
@@ -297,7 +296,7 @@ class SendEmail(webapp.RequestHandler):
 application = webapp.WSGIApplication(
                                      [('/', MainPage),
                                       ('/submit', AddUser),
-                                      ('/sendingabc', SendEmail)
+                                      ('/sendingabc50821431982739tyr3457345', SendEmail)
                                     ], debug=False)
 
 def main():

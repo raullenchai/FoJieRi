@@ -1,5 +1,5 @@
 cron:
 - description: daily summary job
-  url: /sendingabc
+  url: /sendingabc50821431982739tyr3457345
   schedule: every day 01:00
   timezone: Asia/Shanghai
