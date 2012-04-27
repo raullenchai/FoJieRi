@@ -1,5 +1,10 @@
 cron:
-- description: daily summary job
-  url: /sendingabc50821431982739tyr3457345
+- description: daily job
+  url: /sending
   schedule: every day 01:00
+  timezone: Asia/Shanghai
+  
+- description: daily job
+  url: /tweeting
+  schedule: every day 01:10
   timezone: Asia/Shanghai

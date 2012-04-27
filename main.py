@@ -8,6 +8,10 @@ import wsgiref.handlers
 import re, os
 import difflib
 
+################################
+import twitter
+################################
+
 from datetime import datetime, timedelta
 from time import gmtime
 from urllib2 import *
@@ -16,6 +20,9 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import mail  
+
+
+from credentials import *
 
 g_lunar_month_days = [
     0xF0EA4, 0xF1D4A, 0x52C94, 0xF0C96, 0xF1536, 0x42AAC, 0xF0AD4, 0xF16B2, 0x22EA4, 0xF0EA4,  # 1901-1910
@@ -293,11 +300,33 @@ class SendEmail(webapp.RequestHandler):
                         self.response.out.write('<blockquote>done!</blockquote>')
 
 
+
+
+class Tweet(webapp.RequestHandler):
+    def get(self):
+        curtime = gmtime()
+        (myyear, mymonth, myday) = get_lunar_date(datetime(curtime.tm_year, curtime.tm_mon, curtime.tm_mday)+timedelta(hours=curtime.tm_hour+8))
+        
+
+        for x in Fo_holidays:
+            if x[0] == mymonth and x[1] ==  myday:
+                try:
+                    twapi = twitter.Api(Consumer_key, Consumer_secret, Access_token, Access_token_secret)
+                    msg = "今日 (" + NumGB[mymonth] + "月" + NumGB[myday] + "日) " + "是 " + x[2] + "，祈愿佛日增辉，正法久驻，国泰民安，众生解脱! 请转告亲友和同修! 谢谢您对佛节日(fojieri.appspot.com)的关注!"
+                    status = twapi.PostUpdate(msg)
+                    self.response.out.write('<blockquote>%s</blockquote>' % msg)
+                except twitter.TwitterError, e:
+                    print e
+
+
+
 application = webapp.WSGIApplication(
                                      [('/', MainPage),
                                       ('/submit', AddUser),
-                                      ('/sendingabc50821431982739tyr3457345', SendEmail)
-                                    ], debug=False)
+                                      ('/sending', SendEmail),
+                                      ('/tweeting', Tweet)
+                                    ], debug=True)
+
 
 def main():
     run_wsgi_app(application)
