@@ -6,6 +6,8 @@
 *.exe
 *.o
 *.so
+*.pyc
+
 
 # Packages #
 ############
@@ -36,4 +38,4 @@ Thumbs.db
 
 # Secrets            #
 ######################
-credentials.py
+credentials.*
